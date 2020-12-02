@@ -57,19 +57,9 @@ public class Graph {
 
 
     public List<String> buildPath(BpmnModelInstance model, String startId, String endId) throws IllegalAccessException {
-        //ModelElementInstance currentTask =  model.getModelElementById("approveInvoice");
 
-        //StartEvent start = (StartEvent) model.getModelElementById("StartEvent_1");
-
-        //ModelElementType taskType = model.getModel().getType(Task.class);
-        //ModelElementType gatewayType = model.getModel().getType(Gateway.class);
         ModelElementType flowType = model.getModel().getType(FlowNode.class);
-        //Collection<ModelElementInstance> taskInstances = model.getModelElementsByType(taskType);
-        //Collection<ModelElementInstance> gatewayInstances = model.getModelElementsByType(gatewayType);
         Collection<ModelElementInstance> flowInstances = model.getModelElementsByType(flowType);
-        //FlowNode fn = (FlowNode) flowInstances.stream().collect(Collectors.toList()).get(0);
-
-        //.getId()).filter(x -> startId.equals(x)).collect(Collectors.toList());
         boolean isStartPresent = !flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> startId.equals(x.getId())).collect(Collectors.toList()).isEmpty();
         boolean isEndPresent = !flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> endId.equals(x.getId())).collect(Collectors.toList()).isEmpty();
 
@@ -92,86 +82,10 @@ public class Graph {
             System.out.println("    " + nodeId);
         }
 
-        /*
-        Stack<String> path = new Stack<String>();
-        path.add(startId);
-        while (!queue.isEmpty()) {
-            currentNode = queue.poll();
-
-            if (endId.equals(currentNode.getId())) {
-                System.out.println("Found");
-                return path;
-            }
-
-            for(FlowNode adjNode:  currentNode.getSucceedingNodes().list()) {
-                //System.out.println("        " + adjNode.getId());
-
-
-
-                if (!visited.contains(adjNode.getId())) {
-                    path.add(adjNode.getId());
-                    visited.add(adjNode.getId());
-                    //System.out.println(adjNode.getId());
-                    queue.add(adjNode);
-                }
-
-            }
-
-
-        }
-        System.out.println("Not found");
         return null;
-        */
-
-
-
-        /*
-        Map<String, Query<FlowNode>> vertexToSucceedingNodes = new TreeMap<String, Query<FlowNode>>();
-        for (FlowNode fn : flowInstances.stream().map(x -> (FlowNode)x).collect(Collectors.toList())){
-            System.out.println("" + fn.getId() + " " + fn.getSucceedingNodes().count());
-            vertexToSucceedingNodes.put(fn.getId(), fn.getSucceedingNodes());
-            for (FlowNode sn : fn.getSucceedingNodes().list()) {
-                System.out.println("    " + sn.getId() + " " + sn.getSucceedingNodes().count());
-            }
-
-        }
-
-
-
-
-
-
-        LinkedList<FlowNode> visited = new LinkedList<FlowNode>();
-        LinkedList<ModelElementInstance> queue = new LinkedList<ModelElementInstance>();
-        queue.add(currentTask);
-
-        while (!queue.isEmpty()) {
-            currentTask = queue.poll();
-            for(FlowNode adjNode:  currentTask.getS().list()){
-                if ("invoiceProcessed".equals(adjNode.getId())) {
-                    System.out.println("Found");
-                    break;
-                }
-
-                if (adjNode instanceof Gateway)
-                if (!visited.contains(adjNode)) {
-                    visited.add(adjNode);
-                    System.out.println(adjNode.getId());
-                    queue.add((Task) modelInstance.getModelElementById(adjNode.getId()));
-                }
-            }
-        }
-
-
-        */
-        return null;
-
-
     }
 
     public static void main(String args[]) throws IllegalAccessException {
-        System.out.println("Hi!");
-
         Graph g = new Graph();
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
