@@ -22,6 +22,40 @@ import java.util.stream.Stream;
 
 public class Graph {
 
+    public static boolean isTherePath(FlowNode node, String src, String endId,
+                                      LinkedList<String> visited, Stack<String> path)
+    {
+        // visit current node
+        visited.add(src);
+
+        // add current node to the path
+        path.add(src);
+
+        // check whether current node is the target destination
+        if (src.equals(endId)) {
+            return true;
+        }
+
+        // do for every edge (src -> i)
+        for (FlowNode nextNode: node.getSucceedingNodes().list())
+        {
+            // succeeding nodes have not visited
+            if (!visited.contains(nextNode.getId()))
+            {
+                // check whethere there is a path from current node to target destination
+                if (isTherePath(nextNode, nextNode.getId(), endId, visited, path)) {
+                    return true;
+                }
+            }
+        }
+
+        // backtrack: if not connected remove latest node added to the path
+        path.pop();
+
+        return false;
+    }
+
+
     public List<String> buildPath(BpmnModelInstance model, String startId, String endId) throws IllegalAccessException {
         //ModelElementInstance currentTask =  model.getModelElementById("approveInvoice");
 
@@ -45,9 +79,20 @@ public class Graph {
 
         LinkedList<String> visited = new LinkedList<String>();
         LinkedList<FlowNode> queue = new LinkedList<FlowNode>();
+
+        Stack<String> stack = new Stack<String>();
+
         queue.add(flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> startId.equals(x.getId())).findFirst().get());
         FlowNode currentNode;
 
+        FlowNode startNode = flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> startId.equals(x.getId())).findFirst().get();
+        this.isTherePath(startNode, startId, endId, visited, stack);
+
+        for (String nodeId: stack) {
+            System.out.println("    " + nodeId);
+        }
+
+        /*
         Stack<String> path = new Stack<String>();
         path.add(startId);
         while (!queue.isEmpty()) {
@@ -76,7 +121,7 @@ public class Graph {
         }
         System.out.println("Not found");
         return null;
-
+        */
 
 
 
@@ -119,7 +164,7 @@ public class Graph {
 
 
         */
-
+        return null;
 
 
     }
