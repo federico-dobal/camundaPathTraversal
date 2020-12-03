@@ -13,23 +13,22 @@ public class GraphUtils {
     /**
      * Check whether there is path from startId to endId
      * @param node start flow node(used to access to the adjacent nodes)
-     * @param startId start node id
      * @param endId end node id
      * @param visited list of visited nodes
      * @param path tentative path build so far
      * @return
      */
-    public static boolean isTherePath(FlowNode node, String startId, String endId,
+    public static boolean isTherePath(FlowNode node, String endId,
                                       LinkedList<String> visited, Stack<String> path)
     {
         // visit current node
-        visited.add(startId);
+        visited.add(node.getId());
 
         // add current node to the path
-        path.add(startId);
+        path.add(node.getId());
 
         // check whether current node is the target destination
-        if (startId.equals(endId)) {
+        if (node.getId().equals(endId)) {
             return true;
         }
 
@@ -40,7 +39,7 @@ public class GraphUtils {
             if (!visited.contains(nextNode.getId()))
             {
                 // check whether there is a path from current node to target destination
-                if (isTherePath(nextNode, nextNode.getId(), endId, visited, path)) {
+                if (isTherePath(nextNode, endId, visited, path)) {
                     return true;
                 }
             }
@@ -72,12 +71,12 @@ public class GraphUtils {
             throw new IllegalAccessException("Either start or end node is not in the model");
         }
 
-        // Initialise helper variables such as visited and path
+        // Initialize helper variables such as visited and path
         LinkedList<String> visited = new LinkedList<String>();
         Stack<String> path = new Stack<String>();
 
         FlowNode startNode = flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> startId.equals(x.getId())).findFirst().get();
-        GraphUtils.isTherePath(startNode, startId, endId, visited, path);
+        GraphUtils.isTherePath(startNode, endId, visited, path);
 
         return path;
     }
