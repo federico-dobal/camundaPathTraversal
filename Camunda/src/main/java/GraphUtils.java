@@ -3,9 +3,7 @@ import org.camunda.bpm.model.bpmn.instance.FlowNode;
 import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 import org.camunda.bpm.model.xml.type.ModelElementType;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GraphUtils {
@@ -19,12 +17,12 @@ public class GraphUtils {
      * @return
      */
     public static boolean isTherePath(FlowNode node, String endId,
-                                      LinkedList<String> visited, Stack<String> path)
+                                      Map<String,Boolean> visited, Stack<String> path)
     {
         String currentNodeId = node.getId();
 
         // visit current node
-        visited.add(currentNodeId);
+        visited.put(currentNodeId, true);
 
         // add current node to the path
         path.add(currentNodeId);
@@ -38,7 +36,7 @@ public class GraphUtils {
         for (FlowNode nextNode: node.getSucceedingNodes().list())
         {
             // succeeding nodes have not visited
-            if (!visited.contains(nextNode.getId()))
+            if (!visited.getOrDefault(nextNode.getId(), false))
             {
                 // check whether there is a path from current node to target destination
                 if (isTherePath(nextNode, endId, visited, path)) {
@@ -76,7 +74,7 @@ public class GraphUtils {
         }
 
         // Initialize helper variables such as visited and path
-        LinkedList<String> visited = new LinkedList<String>();
+        Map<String,Boolean> visited = new TreeMap<String,Boolean>();
         Stack<String> path = new Stack<String>();
 
         FlowNode startNode = flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> startId.equals(x.getId())).findFirst().get();
