@@ -7,7 +7,7 @@ public class GraphTraversalApplication {
     public static void main(String args[]) throws IllegalAccessException {
 
         if(args.length != 2) {
-            System.out.println("Argument error: expected two arguments");
+            System.err.println("Argument error: expected two arguments");
             System.exit(0);
         }
 
@@ -20,7 +20,7 @@ public class GraphTraversalApplication {
             System.out.print(String.format("The path from %s to %s is: %s", startId, endId, path.toString()));
         } catch (IllegalArgumentException e) {
             // In real life code we should log the exception properly
-            System.out.println("Error: either start or end node are not in the model");
+            System.err.println("Error: either start or end node are not in the model");
             System.exit(0);
         }
     }
