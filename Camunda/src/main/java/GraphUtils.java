@@ -12,7 +12,7 @@ public class GraphUtils {
 
     /**
      * Check whether there is path from startId to endId
-     * @param node start flow node(used to access to the adjacent nodes)
+     * @param node start flow node
      * @param endId end node id
      * @param visited list of visited nodes
      * @param path tentative path build so far
@@ -21,14 +21,16 @@ public class GraphUtils {
     public static boolean isTherePath(FlowNode node, String endId,
                                       LinkedList<String> visited, Stack<String> path)
     {
+        String currentNodeId = node.getId();
+
         // visit current node
-        visited.add(node.getId());
+        visited.add(currentNodeId);
 
         // add current node to the path
-        path.add(node.getId());
+        path.add(currentNodeId);
 
         // check whether current node is the target destination
-        if (node.getId().equals(endId)) {
+        if (currentNodeId.equals(endId)) {
             return true;
         }
 
@@ -63,8 +65,10 @@ public class GraphUtils {
 
         ModelElementType flowType = model.getModel().getType(FlowNode.class);
         Collection<ModelElementInstance> flowInstances = model.getModelElementsByType(flowType);
-        boolean isStartPresent = !flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> startId.equals(x.getId())).collect(Collectors.toList()).isEmpty();
-        boolean isEndPresent = !flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> endId.equals(x.getId())).collect(Collectors.toList()).isEmpty();
+
+        // TODO: improve how to check node are present in model
+        boolean isStartPresent = isNodePresent(startId, flowInstances);
+        boolean isEndPresent = isNodePresent(endId, flowInstances);
 
         // Fail if either start or end node is not on the graph
         if (!isStartPresent || !isEndPresent) {
@@ -79,6 +83,16 @@ public class GraphUtils {
         GraphUtils.isTherePath(startNode, endId, visited, path);
 
         return path;
+    }
+
+    /**
+     * Given the list of model element instances checks whether there exists a node with the provided id
+     * @param nodeIdentifier: node identifier
+     * @param flowInstances list of model element instances
+     * @return
+     */
+    private static boolean isNodePresent(String nodeIdentifier, Collection<ModelElementInstance> flowInstances) {
+        return !flowInstances.stream().map(x -> ((FlowNode) x)).filter(x -> nodeIdentifier.equals(x.getId())).collect(Collectors.toList()).isEmpty();
     }
 
 }
